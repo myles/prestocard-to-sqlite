@@ -1,8 +1,9 @@
 import datetime
+from collections import namedtuple
 from decimal import ROUND_HALF_UP, Decimal
 from pathlib import Path
 from typing import Dict
-from collections import namedtuple
+
 import pandas as pd
 import pytz
 from sqlite_utils.db import Database, Table
@@ -38,9 +39,13 @@ def build_database(db: Database):
             },
             pk="username",
         )
-        transactions_table.enable_fts(["transit_agency", "location"], create_triggers=True)
+        transactions_table.enable_fts(
+            ["transit_agency", "location"], create_triggers=True
+        )
 
-    transactions_indexes = {tuple(i.columns) for i in transactions_table.indexes}
+    transactions_indexes = {
+        tuple(i.columns) for i in transactions_table.indexes
+    }
     if ("date",) not in transactions_indexes:
         transactions_table.create_index(["date"])
 
@@ -60,7 +65,13 @@ def process_transaction_history_csv(path: Path) -> pd.DataFrame:
     """
     df = pd.read_csv(path)
 
-    required_column_names = ["Date", "Transit Agency", "Location", "Type", "Amount"]
+    required_column_names = [
+        "Date",
+        "Transit Agency",
+        "Location",
+        "Type",
+        "Amount",
+    ]
 
     # We want to ensure that our required column names are represented in the
     # CSV file.
@@ -94,7 +105,11 @@ def transform_transaction(incoming_transaction: namedtuple) -> Dict[str, str]:
     """
     transaction = incoming_transaction._asdict()
 
-    to_remove = [k for k in transaction.keys() if k not in ("date", "transit_agency", "location", "type", "amount")]
+    to_remove = [
+        k
+        for k in transaction.keys()
+        if k not in ("date", "transit_agency", "location", "type", "amount")
+    ]
     for key in to_remove:
         del transaction[key]
 
@@ -114,7 +129,9 @@ def save_transaction_history(db: Database, transactions: pd.DataFrame):
 
     transactions = [
         transform_transaction(transaction)  # type: ignore
-        for transaction in transactions.itertuples(name='Transaction')
+        for transaction in transactions.itertuples(name="Transaction")
     ]
 
-    transactions_table.insert_all(records=transactions, pk="date", alter=True, replace=True)
+    transactions_table.insert_all(
+        records=transactions, pk="date", alter=True, replace=True
+    )

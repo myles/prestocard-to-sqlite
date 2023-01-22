@@ -28,7 +28,9 @@ def test_process_transaction_history_csv(mocker):
         return_value=fixtures.PRE_PROCESSED_TRANSACTION_HISTORY,
     )
 
-    df = service.process_transaction_history_csv(Path("TUR_2017_07145993_024.csv"))
+    df = service.process_transaction_history_csv(
+        Path("TUR_2017_07145993_024.csv")
+    )
 
     df.equals(fixtures.POST_PROCESSED_TRANSACTION_HISTORY)
 
