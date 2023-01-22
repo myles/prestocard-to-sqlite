@@ -1,10 +1,8 @@
-import datetime
-from collections import namedtuple
 from decimal import ROUND_HALF_UP, Decimal
 from pathlib import Path
 from typing import Dict
 
-import pandas as pd
+from pandas import DataFrame, read_csv, to_datetime
 import pytz
 from sqlite_utils.db import Database, Table
 
@@ -58,12 +56,12 @@ def clean_amount(value: str) -> Decimal:
     return Decimal(value).quantize(Decimal("1.00"), rounding=ROUND_HALF_UP)
 
 
-def process_transaction_history_csv(path: Path) -> pd.DataFrame:
+def process_transaction_history_csv(path: Path) -> DataFrame:
     """
     Load the CSV transaction history export from Presto Card and return a
     pandas' DataFrame.
     """
-    df = pd.read_csv(path)
+    df = read_csv(path)
 
     required_column_names = [
         "Date",
@@ -93,13 +91,13 @@ def process_transaction_history_csv(path: Path) -> pd.DataFrame:
 
     # Clean up some columns.
     df["amount"] = df["amount"].apply(clean_amount)
-    df["date"] = pd.to_datetime(df["date"], errors="raise")
+    df["date"] = to_datetime(df["date"], errors="raise")
     df["date"].dt.tz_localize = pytz.timezone("America/Toronto")
 
     return df
 
 
-def transform_transaction(incoming_transaction: namedtuple) -> Dict[str, str]:
+def transform_transaction(incoming_transaction) -> Dict[str, str]:
     """
     Transform a transaction from the Presto Card Transaction History.
     """
@@ -119,7 +117,7 @@ def transform_transaction(incoming_transaction: namedtuple) -> Dict[str, str]:
     return transaction
 
 
-def save_transaction_history(db: Database, transactions: pd.DataFrame):
+def save_transaction_history(db: Database, transactions: DataFrame):
     """
     Save Presto Card's transaction history CSV to the SQLite database.
     """

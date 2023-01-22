@@ -22,6 +22,7 @@ pytest = "^7.2.1"
 pytest-cov = "^4.0.0"
 
 mypy = "^0.991"
+types-pytz = "^2022.7.1.0"
 
 ipython = "^8.8.0"
 pytest-mock = "^3.10.0"
@@ -34,6 +35,16 @@ line-length = 80
 
 [tool.isort]
 profile = "black"
+
+[tool.mypy]
+
+[[tool.mypy.overrides]]
+module = 'numpy'
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = 'pandas'
+ignore_missing_imports = true
 
 [build-system]
 requires = ["poetry-core"]
