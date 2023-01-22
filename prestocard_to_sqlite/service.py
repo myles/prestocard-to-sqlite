@@ -35,7 +35,7 @@ def build_database(db: Database):
                 "location": str,
                 "amount": int,
             },
-            pk="username",
+            pk="date",
         )
         transactions_table.enable_fts(
             ["transit_agency", "location"], create_triggers=True
