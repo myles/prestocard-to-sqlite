@@ -1,6 +1,7 @@
-import pandas as pd
+from decimal import ROUND_HALF_UP, Decimal
 from pathlib import Path
-from decimal import Decimal, ROUND_HALF_UP
+
+import pandas as pd
 import pytz
 
 
@@ -8,8 +9,8 @@ def clean_amount(value: str) -> Decimal:
     """
     Clean the amount coming form the transaction history CSV file.
     """
-    value = value.replace('$', '')
-    return Decimal(value).quantize(Decimal('1.00'), rounding=ROUND_HALF_UP)
+    value = value.replace("$", "")
+    return Decimal(value).quantize(Decimal("1.00"), rounding=ROUND_HALF_UP)
 
 
 def process_transaction_history_csv(path: Path) -> pd.DataFrame:
@@ -17,7 +18,7 @@ def process_transaction_history_csv(path: Path) -> pd.DataFrame:
     Load the CSV transaction history export from Presto Card and return a
     pandas' DataFrame.
     """
-    df = pd.read_csv(path, parse_dates=('Date',))
+    df = pd.read_csv(path, parse_dates=("Date",))
 
     required_column_names = ["Date", "Transit Agency", "Location", "Type", "Amount"]
 
@@ -34,7 +35,7 @@ def process_transaction_history_csv(path: Path) -> pd.DataFrame:
             "Transit Agency": "transit_agency",
             "Location": "location",
             "Type": "type",
-            "Amount": "amount"
+            "Amount": "amount",
         },
         inplace=True,
     )
@@ -42,6 +43,6 @@ def process_transaction_history_csv(path: Path) -> pd.DataFrame:
     # Clean up some columns.
     df["amount"] = df["amount"].apply(clean_amount)
     df["date"] = pd.to_datetime(df["date"], errors="raise")
-    df["date"].dt.tz_localize = pytz.timezone('America/Toronto')
+    df["date"].dt.tz_localize = pytz.timezone("America/Toronto")
 
     return df
