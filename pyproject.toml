@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "prestocard-to-sqlite"
 version = "0.1.0"
-description = "Save transacation history from Presto Card to a SQLite database."
+description = "Save transaction history from Presto Card to a SQLite database."
 authors = ["Myles Braithwaite <me@mylesbraithwaite.com>"]
 license = "Apache-2.0"
 readme = "README.md"
@@ -25,6 +25,15 @@ mypy = "^0.991"
 
 ipython = "^8.8.0"
 pytest-mock = "^3.10.0"
+
+[tool.poetry.scripts]
+prestocard-to-sqlite = "prestocard_to_sqlite.cli:cli"
+
+[tool.black]
+line-length = 80
+
+[tool.isort]
+profile = "black"
 
 [build-system]
 requires = ["poetry-core"]

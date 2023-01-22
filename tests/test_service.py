@@ -31,3 +31,30 @@ def test_process_transaction_history_csv(mocker):
     df = service.process_transaction_history_csv(Path("TUR_2017_07145993_024.csv"))
 
     df.equals(fixtures.POST_PROCESSED_TRANSACTION_HISTORY)
+
+
+def test_transform_transaction():
+    transaction_date = datetime.datetime(
+        2022, 1, 9, 16, 38, 47, tzinfo=pytz.timezone("America/Toronto")
+    )
+    expected_transaction_date = transaction_date.isoformat()
+
+    amount = Decimal("-3.70")
+    expected_amount = -370
+
+    transaction = (
+        ("date", transaction_date),
+        ("transit_agency", "Toronto Transit Commission"),
+        ("location", "ST ANDREW STATION"),
+        ("type", "Fare Payment"),
+        ("amount", amount),
+    )
+
+    result = service.transform_transaction(transaction)
+    assert result == {
+        "date": expected_transaction_date,
+        "transit_agency": "Toronto Transit Commission",
+        "location": "ST ANDREW STATION",
+        "type": "Fare Payment",
+        "amount": expected_amount,
+    }
