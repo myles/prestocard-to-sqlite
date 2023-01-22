@@ -2,8 +2,8 @@ from decimal import ROUND_HALF_UP, Decimal
 from pathlib import Path
 from typing import Dict
 
-from pandas import DataFrame, read_csv, to_datetime
 import pytz
+from pandas import DataFrame, read_csv, to_datetime
 from sqlite_utils.db import Database, Table
 
 
