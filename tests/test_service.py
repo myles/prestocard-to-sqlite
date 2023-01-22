@@ -1,4 +1,5 @@
 import datetime
+from collections import namedtuple
 from decimal import Decimal
 from pathlib import Path
 
@@ -24,7 +25,7 @@ def test_clean_amount(value, expected_result):
 
 def test_process_transaction_history_csv(mocker):
     mocker.patch(
-        "prestocard_to_sqlite.service.pd.read_csv",
+        "prestocard_to_sqlite.service.read_csv",
         return_value=fixtures.PRE_PROCESSED_TRANSACTION_HISTORY,
     )
 
@@ -44,12 +45,16 @@ def test_transform_transaction():
     amount = Decimal("-3.70")
     expected_amount = -370
 
-    transaction = (
-        ("date", transaction_date),
-        ("transit_agency", "Toronto Transit Commission"),
-        ("location", "ST ANDREW STATION"),
-        ("type", "Fare Payment"),
-        ("amount", amount),
+    TransactionTuple = namedtuple(
+        "Transaction", ("date", "transit_agency", "location", "type", "amount")
+    )
+
+    transaction = TransactionTuple(
+        transaction_date,
+        "Toronto Transit Commission",
+        "ST ANDREW STATION",
+        "Fare Payment",
+        amount,
     )
 
     result = service.transform_transaction(transaction)
