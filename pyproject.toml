@@ -24,7 +24,7 @@ pytest-cov = "^4.0.0"
 mypy = "^0.991"
 types-pytz = "^2022.7.1.0"
 
-ipython = "^8.8.0"
+ipython = "^8.10.0"
 pytest-mock = "^3.10.0"
 
 [tool.poetry.scripts]
